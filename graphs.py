@@ -8,9 +8,6 @@ import argparse
 import networkx as nx
 import matplotlib.pyplot as plt 
 
-
-
-
 G=nx.Graph() #grafo
 
 option = -1
@@ -24,6 +21,7 @@ menu = """
     3 - Adicionar arestas
     4 - Imprimir Matriz
     5 - Imprimir Dicionário de Grafos
+    6 - Criar um Novo Grafo
     ...
     0 - Sai do programa    
 """
@@ -33,15 +31,15 @@ def optionAction(option):
     Gerencia as ações a serem tomadas conforme opção escolhida pelo usuário
     """
     option = int(option) # converte a string recebida no input para inteiro
+    global G
 
     if option == 1: # Cria um grafo vazio
-        
-        
+                
         nx.draw(G, with_labels=True)
         #plt.savefig("teste.png")  #este comando cria um arquivo png do grafo
         plt.show()
 
-        #G=nx.Graph() #grafo
+        #G=nx.Graph() #grafo6
         #print("Grafo criado:")
         #print( "Vértices: {0}".format( G.nodes() ) )
         #print( "Arestas: {0}".format(G.edges()))
@@ -84,12 +82,42 @@ def optionAction(option):
     elif option == 5: # imprime dicionário de grafos
         # verifica se exuste um grafo e imprime um dicionário representativo
         pass
+
+    elif option == 6: # Cria um Novo Grafo
+        print("""Deseja criar que tipo de Grafo?
+        1 - Ponderado
+        2 - Não Ponderado""")
+        graphType = int(input('--> '))
+        if graphType == 1:
+            G = nx.DiGraph()
+            pass
+        elif graphType == 2:
+            G = nx.Graph()
+            pass
+        else:
+            print("Operação Abortada.")
+            pass
+        pass
     # ...
 
     return option
 
+#Inicializa o primeiro Grafo
+print("""Escolha o tipo de Grafo que deseja Trabalhar:
+    1 - Ponderado
+    2 - Não Ponderado""")
+graphType = int(input('--> '))
+if graphType == 1:
+    G = nx.DiGraph()
+    pass
+elif graphType == 2:
+    G = nx.Graph()
+    pass
+pass
 
+#Inicializa o Menu de Operações do Grafo
 while option != 0:
+    
     print(menu)
     option = input('--> ')
 
