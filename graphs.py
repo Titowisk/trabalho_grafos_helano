@@ -1,9 +1,6 @@
 # Biblioteca de Grafos
 # https://www.python-course.eu/networkx.php
 
-# Módulo nativo
-import argparse
-
 # Módulo de fora
 import networkx as nx
 import matplotlib.pyplot as plt 
@@ -12,7 +9,7 @@ G=nx.Graph() #grafo
 
 option = -1
 menu = """
-    Trabalho de Grafos da equipe: Lucas, Lucas, Rafael e Vitor
+    Trabalho de Grafos da equipe: André, Lucas, Lucas, Rafael
 
     Escolha uma das opções a seguir:
 
@@ -85,8 +82,8 @@ def optionAction(option):
 
     elif option == 6: # Cria um Novo Grafo
         print("""Deseja criar que tipo de Grafo?
-        1 - Ponderado
-        2 - Não Ponderado""")
+        1 - Dirigido
+        2 - Comum""")
         graphType = int(input('--> '))
         if graphType == 1:
             G = nx.DiGraph()
@@ -104,8 +101,8 @@ def optionAction(option):
 
 #Inicializa o primeiro Grafo
 print("""Escolha o tipo de Grafo que deseja Trabalhar:
-    1 - Ponderado
-    2 - Não Ponderado""")
+    1 - Dirigido
+    2 - Comum""")
 graphType = int(input('--> '))
 if graphType == 1:
     G = nx.DiGraph()
