@@ -21,6 +21,32 @@ menu = """
     ...
     0 - Sai do programa    
 """
+
+def add_edges_to_graph(G):
+    """
+    Adiciona arestas aos vértices de origem e destino indicados.
+    
+    !WARNING! adicionar uma aresta à um grafo sem vértices, faz com que ele crie os vértices automaticamente
+    quando o usuário insere o vértice de origem e o vértice de destino
+    """
+
+    # TODO verificar se existe um grafo com vértices, para assim poder adicionar as arestas
+    print("Insira a quantiade de arestas a serem inseridas")
+    edges_quantity = get_user_input()
+    count = 0
+    while count  < edges_quantity:
+        edges_message = """
+--- Aresta {} ---
+        """.format(count + 1) # TODO mostrar um a lista das arestas já existentes
+
+        print("Insira o vértice de origem")
+        edge_origin = get_user_input()
+        print("Insira o vértice de destino")
+        edge_destiny = get_user_input()
+        G.add_edge( edge_origin, edge_destiny )
+        count += 1
+    return G
+
 def add_nodes_to_graph(G):
     """
     Adiciona vértices ao grafo.
@@ -112,18 +138,8 @@ def optionAction(option, G):
         
         
     elif option == 3: # adiciona arestas
-        # verifica se existe um grafo com vértices, para assim poder adicionar as arestas
-        print("Insira a quantiade de arestas a serem inseridas")
-        i= int(input())
-        cont= 0
-        while cont < i:
-            print("--- Aresta %d ---" % (cont+1))
-            print("Insira o vértice de origem")
-            x= input()
-            print("Insira o vértice de destino")
-            y= input()
-            G.add_edge(x, y)
-            cont+=1
+        G = add_edges_to_graph(G)
+        
         
     elif option == 4: # imprime matriz
         # verifica se existe um grafo e imprime uma matriz representativa
