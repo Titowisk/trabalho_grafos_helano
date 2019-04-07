@@ -1,11 +1,10 @@
 # Biblioteca de Grafos
 # https://www.python-course.eu/networkx.php
+# networkx doc: https://networkx.github.io/documentation/stable/
 
 # Módulo de fora
 import networkx as nx
 import matplotlib.pyplot as plt 
-
-G=nx.Graph() #grafo
 
 option = -1
 menu = """
@@ -23,23 +22,58 @@ menu = """
     0 - Sai do programa    
 """
 
+def get_user_input():
+    """
+    Processa a entrada do usuário
+    """
+    user_input = input('--> ')
+    if (user_input.isdigit()):
+        # se o usuário entrar com número, converte para inteiro
+        return int(user_input)
+    else:
+        # se o usuário entrar com outra coisa, converte a string para mínuscula
+        return user_input.lower()
+
+def create_graph(G=False):
+    """
+    Cria um Grafo ou um Dígrafo, conforme escolha do usuário
+    """
+    introduction_message = """
+        Deseja criar que tipo de Grafo?
+            1 - Dirigido
+            2 - Comum
+            0 - Cancelar
+    """
+    if not G: # se não existir grafo criado
+        print(introduction_message)
+        graphType = get_user_input()
+        if graphType == 1:
+            G = nx.DiGraph()
+            
+        elif graphType == 2:
+            G = nx.Graph()
+            
+        else:
+            print("Operação Abortada.")
+    else:
+        print("Já existe um grafo criado, deseja apaga-lo para criar outro ?")
+        yes_or_no = get_user_input()
+        if (yes_or_no in ("s", "sim")): # caso sim
+            G = create_graph()    
+    
+    return G # se G não existir, G = False
+
 def optionAction(option):
     """
     Gerencia as ações a serem tomadas conforme opção escolhida pelo usuário
     """
-    option = int(option) # converte a string recebida no input para inteiro
-    global G
+    option = get_user_input() # retorna inteiro se o usuário insere números
 
-    if option == 1: # Cria um grafo vazio
-                
+    if option == 1: # Imprime um grafo
         nx.draw(G, with_labels=True)
         #plt.savefig("teste.png")  #este comando cria um arquivo png do grafo
         plt.show()
 
-        #G=nx.Graph() #grafo6
-        #print("Grafo criado:")
-        #print( "Vértices: {0}".format( G.nodes() ) )
-        #print( "Arestas: {0}".format(G.edges()))
 
         input('Aperte enter para continuar...')
 
@@ -81,41 +115,20 @@ def optionAction(option):
         pass
 
     elif option == 6: # Cria um Novo Grafo
-        print("""Deseja criar que tipo de Grafo?
-        1 - Dirigido
-        2 - Comum""")
-        graphType = int(input('--> '))
-        if graphType == 1:
-            G = nx.DiGraph()
-            pass
-        elif graphType == 2:
-            G = nx.Graph()
-            pass
-        else:
-            print("Operação Abortada.")
-            pass
-        pass
+        G = create_graph(G)
+            
+        
     # ...
 
     return option
 
+# ==== MAIN ======
+
 #Inicializa o primeiro Grafo
-print("""Escolha o tipo de Grafo que deseja Trabalhar:
-    1 - Dirigido
-    2 - Comum""")
-graphType = int(input('--> '))
-if graphType == 1:
-    G = nx.DiGraph()
-    pass
-elif graphType == 2:
-    G = nx.Graph()
-    pass
-pass
+G = create_graph()
 
 #Inicializa o Menu de Operações do Grafo
 while option != 0:
     
     print(menu)
-    option = input('--> ')
-
     option = optionAction(option) # if option == 0 irá sair do while loop
