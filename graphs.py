@@ -35,6 +35,7 @@ def get_user_input():
         return user_input.lower()
 
 def create_graph(G=False):
+    # print("Debug G = {0}".format(G)) 
     """
     Cria um Grafo ou um Dígrafo, conforme escolha do usuário
     """
@@ -56,14 +57,14 @@ def create_graph(G=False):
         else:
             print("Operação Abortada.")
     else:
-        print("Já existe um grafo criado, deseja apaga-lo para criar outro ?")
+        print("Já existe um grafo criado, deseja apaga-lo para criar outro? (s, sim, n, não)")
         yes_or_no = get_user_input()
         if (yes_or_no in ("s", "sim")): # caso sim
             G = create_graph()    
     
     return G # se G não existir, G = False
 
-def optionAction(option):
+def optionAction(option, G):
     """
     Gerencia as ações a serem tomadas conforme opção escolhida pelo usuário
     """
@@ -131,4 +132,4 @@ G = create_graph()
 while option != 0:
     
     print(menu)
-    option = optionAction(option) # if option == 0 irá sair do while loop
+    option = optionAction(option, G) # if option == 0 irá sair do while loop
