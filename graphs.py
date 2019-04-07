@@ -22,6 +22,18 @@ menu = """
     0 - Sai do programa    
 """
 
+def plot_graph():
+    """
+    Usa o Matplotlib para plotar o grafo.
+    """
+    
+    nx.draw(G, with_labels=True)
+    #plt.savefig("teste.png")  #este comando cria um arquivo png do grafo
+    plt.show()
+
+
+    input('Aperte enter para continuar...')
+
 def get_user_input():
     """
     Processa a entrada do usuário
@@ -71,12 +83,8 @@ def optionAction(option, G):
     option = get_user_input() # retorna inteiro se o usuário insere números
 
     if option == 1: # Imprime um grafo
-        nx.draw(G, with_labels=True)
-        #plt.savefig("teste.png")  #este comando cria um arquivo png do grafo
-        plt.show()
-
-
-        input('Aperte enter para continuar...')
+        plot_graph()
+        
 
     elif option == 2: # adiciona vértices
         # verifica se existe um grafo, para assim poder adicionar os vértices
@@ -90,7 +98,7 @@ def optionAction(option, G):
             cont+=1
         for x in vertices:
             G.add_node(x)
-        pass
+        
     elif option == 3: # adiciona arestas
         # verifica se existe um grafo com vértices, para assim poder adicionar as arestas
         print("Insira a quantiade de arestas a serem inseridas")
@@ -104,13 +112,13 @@ def optionAction(option, G):
             y= input()
             G.add_edge(x, y)
             cont+=1
-        pass
+        
     elif option == 4: # imprime matriz
         # verifica se existe um grafo e imprime uma matriz representativa
         M=nx.to_numpy_matrix(G)
         print(M)
         input('Aperte enter para continuar...')
-        pass
+        
     elif option == 5: # imprime dicionário de grafos
         # verifica se exuste um grafo e imprime um dicionário representativo
         pass
