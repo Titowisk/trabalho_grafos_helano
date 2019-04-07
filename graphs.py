@@ -22,6 +22,11 @@ menu = """
     0 - Sai do programa    
 """
 
+def print_matrix(G):
+    M=nx.to_numpy_matrix(G)
+    print(M)
+    get_user_input("Aperte enter para continuar...")
+
 def add_edges_to_graph(G):
     """
     Adiciona arestas aos vértices de origem e destino indicados.
@@ -80,11 +85,12 @@ def plot_graph():
 
     input('Aperte enter para continuar...')
 
-def get_user_input():
+def get_user_input(default_message="--> "):
     """
-    Processa a entrada do usuário
+    Processa a entrada do usuário.
+    Recebe como parâmetro uma mensagem para o input
     """
-    user_input = input('--> ')
+    user_input = input(default_message)
     if (user_input.isdigit()):
         # se o usuário entrar com número, converte para inteiro
         return int(user_input)
@@ -143,9 +149,8 @@ def optionAction(option, G):
         
     elif option == 4: # imprime matriz
         # verifica se existe um grafo e imprime uma matriz representativa
-        M=nx.to_numpy_matrix(G)
-        print(M)
-        input('Aperte enter para continuar...')
+        print_matrix(G)
+        
         
     elif option == 5: # imprime dicionário de grafos
         # verifica se exuste um grafo e imprime um dicionário representativo
