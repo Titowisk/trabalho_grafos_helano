@@ -21,12 +21,32 @@ menu = """
     ...
     0 - Sai do programa    
 """
+def add_nodes_to_graph(G):
+    """
+    Adiciona vértices ao grafo.
+    Essa função sempre recebe um objeto nx.Graph()
+    """
+    nodes_list = []
+    print("Insira a quantidade de vértices a serem inseridos")
+    # TODO validar somente números como input do usuário
+    nodes_quantity = get_user_input() #transformar a string de input() para int é diferente nas versoes do python 2 e 3
+    count = 0
+    while count  < nodes_quantity:
+        nodes_message = """
+Insira o vértice {nodes_quantity}:
+        """.format(nodes_quantity = nodes_quantity) # TODO mostrar vértices existentes no grafo
+        print(nodes_message)
+        nodes_list.append(input())
+        count += 1
+    for x in nodes_list:
+        G.add_node(x)
+    return G
 
 def plot_graph():
     """
     Usa o Matplotlib para plotar o grafo.
     """
-    
+
     nx.draw(G, with_labels=True)
     #plt.savefig("teste.png")  #este comando cria um arquivo png do grafo
     plt.show()
@@ -88,16 +108,8 @@ def optionAction(option, G):
 
     elif option == 2: # adiciona vértices
         # verifica se existe um grafo, para assim poder adicionar os vértices
-        vertices= []
-        print("Insira a quantidade de vértices a serem inseridos")
-        i= int(input()) #transformar a string de input() para int é diferente nas versoes do python 2 e 3
-        cont= 0
-        while cont < i:
-            print("Insira o vértice %d" % (cont+1)) #a funcao print() pode ser diferente a depender da versao do python no PC
-            vertices.append(input())
-            cont+=1
-        for x in vertices:
-            G.add_node(x)
+        G = add_nodes_to_graph(G)
+        
         
     elif option == 3: # adiciona arestas
         # verifica se existe um grafo com vértices, para assim poder adicionar as arestas
