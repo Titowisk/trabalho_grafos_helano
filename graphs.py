@@ -19,6 +19,7 @@ menu = """
     5 - Imprimir Dicionário de Grafos
     6 - Criar um Novo Grafo
     7 - Exibição dos Graus
+    8 - Testar Aresta
     ...
     0 - Sai do programa    
 """
@@ -165,6 +166,22 @@ def exibir_graus(G):
         input('Aperte enter para continuar...')
     return
 
+def testar_aresta(G):
+    print("Insira a primeira aresta: ")
+    aresta_a = get_user_input()
+    print("Insira a segunda aresta: ")
+    aresta_b = get_user_input()
+    arestas= G.number_of_edges(aresta_a, aresta_b)
+    if arestas == 0:
+        print ("Não existe aresta entre esses vértices.")
+        input('Aperte enter para continuar...')
+    else:
+        #TODO print("Existem {arestas} arestas entre os vértices." .format(arestas))
+        print("Número de Arestas: ")
+        print(arestas)
+        input('Aperte enter para continuar...')
+    return
+
 def optionAction(option, G):
     """
     Gerencia as ações a serem tomadas conforme opção escolhida pelo usuário
@@ -198,6 +215,9 @@ def optionAction(option, G):
             
     elif option == 7: # Menu de Graus
         exibir_graus(G)
+    
+    elif option == 8:
+        testar_aresta(G)
 
     # ...
 
