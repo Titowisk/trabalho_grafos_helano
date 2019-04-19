@@ -19,6 +19,7 @@ menu = """
     4 - Imprimir Matriz
     5 - Imprimir Dicionário de Grafos
     6 - Criar um Novo Grafo
+    7 - Criar grafo de um arquivo
     ...
     0 - Sai do programa    
 """
@@ -108,6 +109,7 @@ def create_graph(G=False):
         Deseja criar que tipo de Grafo?
             1 - Dirigido
             2 - Comum
+            3 - Criar grafo de um arquivo
             0 - Cancelar
     """
     if not G: # se não existir grafo criado
@@ -118,7 +120,8 @@ def create_graph(G=False):
             
         elif graphType == 2:
             G = nx.Graph()
-            
+        elif graphType == 3:
+            G = get_graph_from_file() # irá criar um grafo            
         else:
             print("Operação Abortada.")
     else:
@@ -129,7 +132,7 @@ def create_graph(G=False):
     
     return G # se G não existir, G = False
 
-def get_graph_from_file(G):
+def get_graph_from_file(G=False):
     """
     Cria um grafo a partir das informações de um arquivo csv
     Estrutura do arquivo csv:
@@ -166,12 +169,12 @@ def get_graph_from_file(G):
     
     # ler a pasta root e ver quais arquivos csv existem
     list_of_files = os.listdir() # lista todos os arquivos dentro da pasta raiz: /trabalho_grafos_helano/
-    list_of_csv_files = [csv for file in list_of_files if file.endswith(".csv")] # cria uma nova lista apenas com arquivos.csv
+    list_of_csv_files = [file for file in list_of_files if file.endswith(".csv")] # cria uma nova lista apenas com arquivos.csv
 
     # perguntar qual arquivo csv quer utilizar
     print("Escolha um arquivo para criar o grafo:")
     for i, csv in enumerate(list_of_csv_files):
-        print("{nome} ({numero})".format(arquivo=csv, numero=i))
+        print("{arquivo} ({numero})".format(arquivo=csv, numero=i))
     selected_option = get_user_input("Digite uma opção: ")
     selected_file = list_of_csv_files[selected_option]
 
@@ -180,10 +183,31 @@ def get_graph_from_file(G):
     graph_type, nodes, edges = parseCsvData(selected_file)
 
     # criar um grafo a partir do dicionário lido
+    
+    if (graph_type == "grafo"):
+        #cria grafo normal
+        G = nx.Graph()
+        G.add_nodes_from(nodes)
+        G.add_edges_from(edges)
+    elif (graph_type in ("dígrafo", "digrafo")):
+        # cria dígrafo
+        G = nx.DiGraph()
+        G.add_nodes_from(nodes)
+        G.add_edges_from(edges)
 
     # imprimir o dicionário criado para visualização do usuário
+    print_graph_info(G)
 
     return G
+
+def print_graph_info(G):
+
+    try:
+        print("\nGrafo criado ======================")
+        print("Vértices: {v}".format(v=G.nodes))
+        print("Arestas: {a}".format(a=nx.convert.to_edgelist(G)))
+    except:
+        print("Não há grafo criado")
     
 
 def parseCsvData(file):
@@ -193,7 +217,7 @@ def parseCsvData(file):
         for i, line in enumerate(csv):
             line = line.rstrip("\n")
             if (i == 0):
-                graph_type = line
+                graph_type = line.lower()
             elif (i > 1): # i == 1 é cabeçalho
                 fields = line.split("|")
                 list_of_nodes.append(fields[0]) # fields[0] = "a" node
