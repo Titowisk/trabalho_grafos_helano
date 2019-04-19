@@ -20,6 +20,7 @@ menu = """
     6 - Criar um Novo Grafo
     7 - Exibição dos Graus
     8 - Testar Aresta
+    9 - Vértices Adjacentes
     ...
     0 - Sai do programa    
 """
@@ -182,6 +183,14 @@ def testar_aresta(G):
         input('Aperte enter para continuar...')
     return
 
+def testar_adjacencia(G):
+    print("Insira o vértice: ")
+    v = get_user_input()
+    vertices_adjacentes= [n for n in G.neighbors(v)]
+    print(vertices_adjacentes) #TODO adicionar tratamento para vértice sem adjacêntes
+    input('Aperte enter para continuar...')
+    return
+
 def optionAction(option, G):
     """
     Gerencia as ações a serem tomadas conforme opção escolhida pelo usuário
@@ -219,6 +228,8 @@ def optionAction(option, G):
     elif option == 8:
         testar_aresta(G)
 
+    elif option == 9:
+        testar_adjacencia(G)
     # ...
 
     return option
