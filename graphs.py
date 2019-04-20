@@ -20,6 +20,7 @@ menu = """
     5 - Imprimir Dicionário de Grafos
     6 - Criar um Novo Grafo
     7 - Criar grafo de um arquivo
+    8 - Verificar Caminho de Euler
     ...
     0 - Sai do programa    
 """
@@ -232,7 +233,21 @@ def parseCsvData(file):
 
     return graph_type, list_of_nodes, list_of_edges
 
-
+def verify_eulerian_path(G):
+    """
+    Verifica se existe um caminho de Euler no grafo
+    """
+    total = 0
+    for node in G.nodes:
+        if((G.degree(node) % 2) != 0): # se o grau for impar
+            total += 1
+            if (total > 2):
+                break
+    if (total > 2):
+        print("Não existe um caminho de Euler!")
+    else:
+        print("Existe um caminho de Euler!")
+    get_user_input("Aperte enter para continuar...")
 
 def optionAction(option, G):
     """
@@ -267,6 +282,9 @@ def optionAction(option, G):
         
     elif option == 7: # ler grafo de um arquivo
         G = get_graph_from_file(G)
+        
+    elif option == 8: # verifica se existe um caminho de euler
+        verify_eulerian_path(G)
         
     # ...
 
