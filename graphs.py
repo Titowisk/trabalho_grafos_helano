@@ -21,6 +21,9 @@ menu = """
     6 - Criar um Novo Grafo
     7 - Criar grafo de um arquivo
     8 - Verificar Caminho de Euler
+    9 - Exibição dos Graus
+    10 - Testar Aresta
+    11 - Vértices Adjacentes
     ...
     0 - Sai do programa    
 """
@@ -133,6 +136,65 @@ def create_graph(G=False):
     
     return G # se G não existir, G = False
 
+def exibir_graus(G):
+    print("0 - Grau de um Vértice")
+    print("1 - Graus mínimo, médio e máximo")
+    # TODO validar somente números como input do usuário
+    opcao = get_user_input() #transformar a string de input() para int é diferente nas versoes do python 2 e 3
+    if opcao == 0:
+        print("Deseja obter o grau de qual Vértice?")
+        vertice= get_user_input()
+        print("Grau do vértice:")
+        print(G.degree(vertice)) # TODO juntar para um print so
+        input('Aperte enter para continuar...')
+    if opcao == 1:
+        vertices_graus= G.degree()
+        #valores_graus = dict(vertices_graus).values()
+        valores_graus = [v for k, v in vertices_graus]
+        media= 0
+        qtd_vertices = 0
+        grau_min= 100
+        grau_max= 0
+        for x in valores_graus:
+            media+= x
+            qtd_vertices+=1
+            if grau_min > x:
+                grau_min= x
+            if grau_max < x:
+                grau_max= x
+        resultado= media/qtd_vertices
+        print("Grau Médio:")
+        print(resultado)
+        print("Grau Mínimo:")
+        print(grau_min)
+        print("Grau Máximo:")
+        print(grau_max)
+        input('Aperte enter para continuar...')
+    return
+
+def testar_aresta(G):
+    print("Insira a primeira aresta: ")
+    aresta_a = get_user_input()
+    print("Insira a segunda aresta: ")
+    aresta_b = get_user_input()
+    arestas= G.number_of_edges(aresta_a, aresta_b)
+    if arestas == 0:
+        print ("Não existe aresta entre esses vértices.")
+        input('Aperte enter para continuar...')
+    else:
+        #TODO print("Existem {arestas} arestas entre os vértices." .format(arestas))
+        print("Número de Arestas: ")
+        print(arestas)
+        input('Aperte enter para continuar...')
+    return
+
+def testar_adjacencia(G):
+    print("Insira o vértice: ")
+    v = get_user_input()
+    vertices_adjacentes= [n for n in G.neighbors(v)]
+    print(vertices_adjacentes) #TODO adicionar tratamento para vértice sem adjacêntes
+    input('Aperte enter para continuar...')
+    return
 def get_graph_from_file(G=False):
     """
     Cria um grafo a partir das informações de um arquivo csv
@@ -279,12 +341,22 @@ def optionAction(option, G):
 
     elif option == 6: # Cria um Novo Grafo
         G = create_graph(G)
-        
+
     elif option == 7: # ler grafo de um arquivo
         G = get_graph_from_file(G)
         
     elif option == 8: # verifica se existe um caminho de euler
         verify_eulerian_path(G)
+
+    elif option == 9: # Menu de Graus
+        exibir_graus(G)
+    
+    elif option == 10:
+        testar_aresta(G)
+
+    elif option == 11:
+        testar_adjacencia(G)
+        
         
     # ...
 
