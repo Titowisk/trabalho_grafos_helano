@@ -21,6 +21,9 @@ menu = """
     6 - Criar um Novo Grafo
     7 - Criar grafo de um arquivo
     8 - Verificar Caminho de Euler
+    9 - Exibição dos Graus
+    10 - Testar Aresta
+    11 - Vértices Adjacentes
     ...
     0 - Sai do programa    
 """
@@ -338,21 +341,22 @@ def optionAction(option, G):
 
     elif option == 6: # Cria um Novo Grafo
         G = create_graph(G)
-            
-    elif option == 7: # Menu de Graus
-        exibir_graus(G)
-    
-    elif option == 8:
-        testar_aresta(G)
 
-    elif option == 9:
-        testar_adjacencia(G)
-        
     elif option == 7: # ler grafo de um arquivo
         G = get_graph_from_file(G)
         
     elif option == 8: # verifica se existe um caminho de euler
         verify_eulerian_path(G)
+
+    elif option == 9: # Menu de Graus
+        exibir_graus(G)
+    
+    elif option == 10:
+        testar_aresta(G)
+
+    elif option == 11:
+        testar_adjacencia(G)
+        
         
     # ...
 
