@@ -1,0 +1,6 @@
+grafo
+vértice|aresta|peso
+a|a,b|
+b||
+c|b,c|
+d|a,d|
