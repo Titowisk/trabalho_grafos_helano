@@ -7,7 +7,7 @@ import networkx as nx
 import matplotlib.pyplot as plt 
 import os
 
-inWeighted = False
+isWeighted = False
 option = -1
 menu = """
     Trabalho de Grafos da equipe: André, Lucas, Lucas, Rafael
@@ -27,6 +27,7 @@ menu = """
     11 - Vértices Adjacentes
     12 - Remover Vértices
     13 - Remover Arestas
+    14 - Testar se Grafo é Conexo
     ...
     0 - Sai do programa    
 """
@@ -363,6 +364,19 @@ def verify_eulerian_path(G):
         print("Existe um caminho de Euler!")
     get_user_input("Aperte enter para continuar...")
 
+def is_connected():
+    try:
+        if nx.is_connected(G):
+            print("Conexo: Sim")
+        else:
+            print("Conexo: Não")
+    except:
+        if nx.is_strongly_connected(G):
+            print("Conexo: Sim")
+        else:
+            print("Conexo: Não")
+    get_user_input("Aperte enter para continuar...")
+
 def optionAction(option, G):
     """
     Gerencia as ações a serem tomadas conforme opção escolhida pelo usuário
@@ -414,6 +428,9 @@ def optionAction(option, G):
     
     elif option == 13:
         remove_edge()
+
+    elif option == 14:
+        is_connected()
     # ...
 
     return option
