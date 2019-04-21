@@ -7,6 +7,7 @@ import networkx as nx
 import matplotlib.pyplot as plt 
 import os
 
+inWeighted = False
 option = -1
 menu = """
     Trabalho de Grafos da equipe: André, Lucas, Lucas, Rafael
@@ -24,6 +25,8 @@ menu = """
     9 - Exibição dos Graus
     10 - Testar Aresta
     11 - Vértices Adjacentes
+    12 - Remover Vértices
+    13 - Remover Arestas
     ...
     0 - Sai do programa    
 """
@@ -34,6 +37,7 @@ def print_matrix(G):
     get_user_input("Aperte enter para continuar...")
 
 def add_edges_to_graph(G):
+    global isWeighted
     """
     Adiciona arestas aos vértices de origem e destino indicados.
     
@@ -54,9 +58,27 @@ def add_edges_to_graph(G):
         edge_origin = get_user_input()
         print("Insira o vértice de destino")
         edge_destiny = get_user_input()
-        G.add_edge( edge_origin, edge_destiny )
+        if isWeighted:
+            print("Insira o peso da aresta")
+            edge_weight = get_user_input()
+            G.add_edge( edge_origin, edge_destiny, weight=edge_weight )
+        else:
+            G.add_edge( edge_origin, edge_destiny )
         count += 1
     return G
+
+def remove_edge():
+    print("Insira o vértice de origem")
+    edge_origin = get_user_input()
+    print("Insira o vértice de destino")
+    edge_destiny = get_user_input()
+    try:
+        G.remove_edge( edge_origin, edge_destiny )
+        print("Aresta removida com sucesso.")
+    except:
+        print("A Operação falhou.")
+        print("Não existe uma aresta entre {a} e {b}".format(a=edge_origin,b=edge_destiny))
+    get_user_input("Pressione enter para continuar...")       
 
 def add_nodes_to_graph(G):
     """
@@ -71,13 +93,22 @@ def add_nodes_to_graph(G):
     while count  < nodes_quantity:
         nodes_message = """
 Insira o vértice {nodes_quantity}:
-        """.format(nodes_quantity = nodes_quantity) # TODO mostrar vértices existentes no grafo
+        """.format(nodes_quantity = count+1) # TODO mostrar vértices existentes no grafo
         print(nodes_message)
         nodes_list.append(input())
         count += 1
     for x in nodes_list:
         G.add_node(x)
     return G
+
+def remove_node():
+    try:
+        G.remove_node(get_user_input("Digite o vértice que deseja ser removido, os vertices existentes são :{a}\n".format(a=list(G.nodes))))
+        print("A Operação finalizou com sucesso.")  
+    except:
+        print("A Operação falhou. O Vértice não existe no grafo.")
+    finally:
+        get_user_input("Aperte enter para continuar...")
 
 def plot_graph():
     """
@@ -113,19 +144,28 @@ def create_graph(G=False):
         Deseja criar que tipo de Grafo?
             1 - Dirigido
             2 - Comum
-            3 - Criar grafo de um arquivo
+            3 - Dirigido Ponderado
+            4 - Ponderado
+            5 - Criar grafo de um arquivo
             0 - Cancelar
     """
     if not G: # se não existir grafo criado
         print(introduction_message)
         graphType = get_user_input()
+        global isWeighted
+
         if graphType == 1:
-            G = nx.DiGraph()
-            
+            G = nx.DiGraph()            
         elif graphType == 2:
             G = nx.Graph()
         elif graphType == 3:
-            G = get_graph_from_file() # irá criar um grafo            
+            G = nx.DiGraph()
+            isWeighted= True
+        elif graphType == 4:
+            G = nx.Graph()
+            isWeighted = True
+        elif graphType == 5:
+            G = get_graph_from_file() # irá criar um grafo  
         else:
             print("Operação Abortada.")
     else:
@@ -269,6 +309,18 @@ def print_graph_info(G):
         print("\nGrafo criado ======================")
         print("Vértices: {v}".format(v=G.nodes))
         print("Arestas: {a}".format(a=nx.convert.to_edgelist(G)))
+        #Verifica se é conexo ou não
+        try:
+            if nx.is_connected(G):
+                print("Conexo: Sim")
+            else:
+                print("Conexo: Não")
+        except:
+            if nx.is_strongly_connected(G):
+                print("Conexo: Sim")
+            else:
+                print("Conexo: Não")
+        
     except:
         print("Não há grafo criado")
     
@@ -356,8 +408,12 @@ def optionAction(option, G):
 
     elif option == 11:
         testar_adjacencia(G)
-        
-        
+    
+    elif option == 12:
+        remove_node()
+    
+    elif option == 13:
+        remove_edge()
     # ...
 
     return option
