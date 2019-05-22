@@ -6,6 +6,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt 
 import os
+import math
+import time
 
 isWeighted = False
 option = -1
@@ -28,6 +30,7 @@ menu = """
     12 - Remover Vértices
     13 - Remover Arestas
     14 - Testar se Grafo é Conexo
+    15 - Dijkstra
     ...
     0 - Sai do programa    
 """
@@ -377,6 +380,77 @@ def is_connected():
             print("Conexo: Não")
     get_user_input("Aperte enter para continuar...")
 
+
+'https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm'
+'Deve retornar menor caminho entre source e target, contando quantas interações ocorreram e quanto tempo levou para executar.'
+'https://networkx.github.io/documentation/stable/_modules/networkx/algorithms/shortest_paths/weighted.html baseado em _dijkstra_multisource'
+def dijkstra(G): 
+    inicio = input("Qual o vertice inicial?\n")   
+    destino = input("Qual o vertice destino?\n")   
+    Matrix = nx.to_numpy_matrix(G)
+    Nodes = list(G)
+    #IN
+    Visto = list()
+    Visto.append(Nodes[Nodes.index(inicio)])
+    #d
+    distancia = list()
+    distancia = [math.inf] * (len(Nodes))
+    #-1 para representar nulo
+    distancia[Nodes.index(inicio)] = -1
+    #s
+    path = list()
+    path = [None] * (len(Nodes))
+
+    currentNode = Visto[0]
+    #tempo inicial de execuçao
+    StartTime = time.time()
+    #Contador de iteracoes
+    iteracoes = 0
+
+    while destino not in Visto:
+        menorDistVizinho = math.inf
+        nextNode = None
+        #preenche as distancias e escolhe o vizinho com menor distancia dos vizinhos 
+        for vizinho in G.neighbors(currentNode):
+            if vizinho in Visto:
+                continue
+                
+            dist = Matrix[Nodes.index(currentNode),Nodes.index(vizinho)]
+
+            dist = min(dist + int(distancia[Nodes.index(currentNode)]), distancia[Nodes.index(vizinho)])
+            if dist < distancia[Nodes.index(vizinho)]:
+                distancia[Nodes.index(vizinho)] = dist
+                path[Nodes.index(vizinho)] = currentNode
+            if(dist < menorDistVizinho):
+                menorDistVizinho = dist
+                nextNode = vizinho
+
+        currentNode = nextNode
+        Visto.append(currentNode)
+        #Nova Iteração se destino ainda nao foi lido
+        iteracoes = iteracoes + 1
+
+    #tempo final de execucao
+    EndTime = time.time()
+
+    #Constroi o menor caminho
+    shortestPath = list()
+    nextNode = destino
+    shortestPath.append(nextNode)
+    print(nextNode)
+    while inicio not in shortestPath:        
+        shortestPath.append(path[Nodes.index(nextNode)])  
+        nextNode = path[Nodes.index(nextNode)]
+        print(nextNode)
+
+
+    shortestPath.reverse()
+    print("O Caminho mais curto através do algoritmo de Dijkstra foi:\n")
+    print(shortestPath)
+    print("Tempo de Execução:" + str(EndTime-StartTime))
+    print("Iterações:" + str(iteracoes))
+
+
 def optionAction(option, G):
     """
     Gerencia as ações a serem tomadas conforme opção escolhida pelo usuário
@@ -431,6 +505,8 @@ def optionAction(option, G):
 
     elif option == 14:
         is_connected()
+    elif option == 15:
+        dijkstra(G)
     # ...
 
     return option
