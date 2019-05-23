@@ -442,7 +442,7 @@ def optionAction(option, G):
         is_connected()
     # ...
 
-    return option
+    return option, G
 
 # ==== MAIN ======
 
@@ -453,4 +453,4 @@ G = create_graph()
 while option != 0:
     
     print(menu)
-    option = optionAction(option, G) # if option == 0 irá sair do while loop
+    option, G = optionAction(option, G) # if option == 0 irá sair do while loop
