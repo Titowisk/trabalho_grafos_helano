@@ -291,13 +291,22 @@ def get_graph_from_file(G=False):
     if (graph_type == "grafo"):
         #cria grafo normal
         G = nx.Graph()
-        G.add_nodes_from(nodes)
-        G.add_edges_from(edges)
+        # G.add_nodes_from(nodes)
+        # try:
+        #     G.add_edges_from(edges)
+        # except TypeError: # TypeError: 'float' object is not iterable -> ocorre quando a aresta é ponderada
+        #     G.add_weighted_edges_from(edges)
+        
     elif (graph_type in ("dígrafo", "digrafo")):
         # cria dígrafo
         G = nx.DiGraph()
-        G.add_nodes_from(nodes)
+    
+    G.add_nodes_from(nodes)
+    try:
         G.add_edges_from(edges)
+    except TypeError: # TypeError: 'float' object is not iterable -> ocorre quando a aresta é ponderada
+        G.add_weighted_edges_from(edges)
+
 
     # imprimir o dicionário criado para visualização do usuário
     print_graph_info(G)
@@ -433,7 +442,7 @@ def optionAction(option, G):
         is_connected()
     # ...
 
-    return option
+    return option, G
 
 # ==== MAIN ======
 
@@ -444,4 +453,4 @@ G = create_graph()
 while option != 0:
     
     print(menu)
-    option = optionAction(option, G) # if option == 0 irá sair do while loop
+    option, G = optionAction(option, G) # if option == 0 irá sair do while loop
