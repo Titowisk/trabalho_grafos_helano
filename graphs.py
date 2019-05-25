@@ -6,6 +6,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt 
 import os
+import pprint
 
 isWeighted = False
 option = -1
@@ -28,6 +29,7 @@ menu = """
     12 - Remover Vértices
     13 - Remover Arestas
     14 - Testar se Grafo é Conexo
+    20 - Aplicar Algoritmo de Floyd
     ...
     0 - Sai do programa    
 """
@@ -386,6 +388,41 @@ def is_connected():
             print("Conexo: Não")
     get_user_input("Aperte enter para continuar...")
 
+def floyds_algorithm(G):
+    """
+    Calcula o menor caminho para todos os pares de vértices do grafo.
+    Fonte:
+    https://www.youtube.com/watch?v=4OQeCuLYj-4
+    """
+    pp = pprint.PrettyPrinter(indent=4)
+    # verifica se o grafo é digrafo e ponderado
+    # https://networkx.github.io/documentation/stable/reference/functions.html
+    if not (nx.is_directed(G) and nx.is_weighted(G)):
+        print("O grafo precisa ser dirigido e ponderado.")
+        return  False
+    
+
+    # ajusta a matriz para colocar os valores de infinito
+    # https://docs.scipy.org/doc/numpy/reference/generated/numpy.matrix.html
+    M = nx.to_numpy_matrix(G)
+    matrix = M.tolist()
+    nodes_quantity = len(G)
+    nodes_quantity_range = range(nodes_quantity)
+    for i in nodes_quantity_range:
+        for j in nodes_quantity_range:
+            if (i != j and matrix[i][j] == 0):
+                matrix[i][j] = float("inf")
+    pp.pprint(matrix)
+
+    # algoritmo de floyd
+    for k in nodes_quantity_range:
+        for i in nodes_quantity_range:
+            for j in nodes_quantity_range:
+                if(matrix[i][j] > matrix[i][k] + matrix[k][j]):
+                    matrix[i][j] = matrix[i][k] + matrix[k][j]
+    pp.pprint(matrix)
+
+
 def optionAction(option, G):
     """
     Gerencia as ações a serem tomadas conforme opção escolhida pelo usuário
@@ -441,6 +478,8 @@ def optionAction(option, G):
     elif option == 14:
         is_connected()
     # ...
+    elif option == 20:
+        floyds_algorithm(G)
 
     return option, G
 
