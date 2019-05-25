@@ -29,6 +29,8 @@ menu = """
     13 - Remover Arestas
     14 - Testar se Grafo é Conexo
     ...
+    20 - Componentes Conectados
+    ...
     0 - Sai do programa    
 """
 
@@ -386,6 +388,36 @@ def is_connected():
             print("Conexo: Não")
     get_user_input("Aperte enter para continuar...")
 
+def busca_em_largura(G, origem):
+    G_adj = G.adj #vizinhos
+    vistos = set()
+    proxNivel = {origem} #comeca a pesquisa pelo vertice de origem
+    while proxNivel:
+        esseNivel = proxNivel
+        proxNivel = set()
+        for vertice in esseNivel:
+            if vertice not in vistos:
+                yield vertice
+                vistos.add(vertice)
+                proxNivel.update(G_adj[vertice])
+
+def componentes_conectados(G):
+    vistos = set()
+    for vertice in G:
+        if vertice not in vistos:
+            c = set(busca_em_largura(G, vertice))
+            yield c
+            vistos.update(c)
+
+def total_componentes_conectados(G):
+    #print("O grafo é dividido em ")
+    #print (sum(1 for cc in componentes_conectados(G)))
+    result= sum(1 for cc in componentes_conectados(G))
+    
+    #print(" regiões")
+    print("O grafo é dividido em " + str(result) + " regiões")
+    get_user_input("Aperte enter para continuar...")
+
 def optionAction(option, G):
     """
     Gerencia as ações a serem tomadas conforme opção escolhida pelo usuário
@@ -440,6 +472,9 @@ def optionAction(option, G):
 
     elif option == 14:
         is_connected()
+
+    elif option == 20:
+        total_componentes_conectados(G)
     # ...
 
     return option, G
