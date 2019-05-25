@@ -410,11 +410,8 @@ def componentes_conectados(G):
             vistos.update(c)
 
 def total_componentes_conectados(G):
-    #print("O grafo é dividido em ")
-    #print (sum(1 for cc in componentes_conectados(G)))
     result= sum(1 for cc in componentes_conectados(G))
     
-    #print(" regiões")
     print("O grafo é dividido em " + str(result) + " regiões")
     get_user_input("Aperte enter para continuar...")
 
