@@ -29,6 +29,7 @@ menu = """
     13 - Remover Arestas
     14 - Testar se Grafo é Conexo
     ...
+    15 - Warshall
     20 - Componentes Conectados
     ...
     0 - Sai do programa    
@@ -415,6 +416,27 @@ def total_componentes_conectados(G):
     print("O grafo é dividido em " + str(result) + " regiões")
     get_user_input("Aperte enter para continuar...")
 
+def warshall(G):
+    V= nx.number_of_nodes(G) #quantidade de vértices
+    dist= nx.to_numpy_matrix(G) #transforma o grafo em matriz
+
+    #percorre a matriz para substituir as ausências de caminhos por 777, porém ignorando a distância elemento com ele mesmo (diagonal principal) 
+    for i in range(V):
+        for j in range(V):
+            if i == j: #teste da diagonal principal, distância do elemento para ele mesmo deve continuar 0
+                print(".")
+            else:
+                if dist[i,j] == 0:
+                    dist[i,j] = 777 
+
+    # rodando o algoritmo de Warshall
+    for k in range(V): 
+        for i in range(V): 
+            for j in range(V):
+                dist[i,j] = min(dist[i,j], dist[i,k] + dist[k,j])
+    print(dist)
+    get_user_input("Aperte enter para continuar...")
+
 def optionAction(option, G):
     """
     Gerencia as ações a serem tomadas conforme opção escolhida pelo usuário
@@ -469,6 +491,9 @@ def optionAction(option, G):
 
     elif option == 14:
         is_connected()
+
+    elif option == 15:
+        warshall(G)
 
     elif option == 20:
         total_componentes_conectados(G)
