@@ -6,6 +6,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt 
 import os
+from collections import deque
 import math
 import time
 
@@ -31,6 +32,7 @@ menu = """
     13 - Remover Arestas
     14 - Testar se Grafo é Conexo
     15 - Dijkstra
+    16 - Caminhos de Bellman-Ford
     ...
     0 - Sai do programa    
 """
@@ -389,6 +391,82 @@ def is_connected():
             print("Conexo: Não")
     get_user_input("Aperte enter para continuar...")
 
+def bellman_ford_path():
+    """
+    Retorna o tamanho do menor caminho de um vértice para todos os outros
+    """
+    source = get_user_input("Escolha o vértice de origem: ")
+
+    if G.is_multigraph():
+        weight = lambda u, v, d: min(attr.get("weight", 1) for attr in d.values())
+    weight = lambda u, v, data: data.get("weight", 1)
+
+    pred=None
+    paths=None
+    dist=None
+    target=None
+    
+    for s in source:
+        if s not in G:
+            raise nx.NodeNotFound("Source {} not in G".format(s))
+
+    if pred is None:
+        pred = {v: [] for v in source}
+
+    if dist is None:
+        dist = {v: 0 for v in source}
+
+    G_succ = G.succ if G.is_directed() else G.adj
+    inf = float('inf')
+    n = len(G)
+
+    count = {}
+    q = deque(source)
+    in_q = set(source)
+    while q:
+        u = q.popleft()
+        in_q.remove(u)
+
+        # Skip relaxations if any of the predecessors of u is in the queue.
+        if all(pred_u not in in_q for pred_u in pred[u]):
+            dist_u = dist[u]
+            for v, e in G_succ[u].items():
+                dist_v = dist_u + weight(v, u, e)
+
+                if dist_v < dist.get(v, inf):
+                    if v not in in_q:
+                        q.append(v)
+                        in_q.add(v)
+                        count_v = count.get(v, 0) + 1
+                        if count_v == n:
+                            raise nx.NetworkXUnbounded(
+                                "Negative cost cycle detected.")
+                        count[v] = count_v
+                    dist[v] = dist_v
+                    pred[v] = [u]
+
+                elif dist.get(v) is not None and dist_v == dist.get(v):
+                    pred[v].append(u)
+
+    if paths is not None:
+        dsts = [target] if target is not None else pred
+        for dst in dsts:
+
+            path = [dst]
+            cur = dst
+
+            while pred[cur]:
+                cur = pred[cur][0]
+                path.append(cur)
+
+            path.reverse()
+            paths[dst] = path
+
+    length = dict(dist)
+
+    for node in G.nodes:
+        print('{}: {}'.format(node, length[node]))
+    get_user_input("Aperte enter para continuar...")
 
 'https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm'
 'Deve retornar menor caminho entre source e target, contando quantas interações ocorreram e quanto tempo levou para executar.'
@@ -512,8 +590,12 @@ def optionAction(option, G):
 
     elif option == 14:
         is_connected()
+
     elif option == 15:
         dijkstra(G)
+
+    elif option == 16:
+        bellman_ford_path()
     # ...
 
     return option, G
