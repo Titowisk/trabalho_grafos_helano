@@ -450,8 +450,6 @@ def dijkstra(G):
     while inicio not in shortestPath:        
         shortestPath.append(path[Nodes.index(nextNode)])  
         nextNode = path[Nodes.index(nextNode)]
-        print(nextNode)
-
 
     shortestPath.reverse()
     print("O Caminho mais curto através do algoritmo de Dijkstra foi:\n")
