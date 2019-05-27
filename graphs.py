@@ -7,6 +7,8 @@ import networkx as nx
 import matplotlib.pyplot as plt 
 import os
 from collections import deque
+import math
+import time
 
 isWeighted = False
 option = -1
@@ -29,7 +31,8 @@ menu = """
     12 - Remover Vértices
     13 - Remover Arestas
     14 - Testar se Grafo é Conexo
-    15 - Caminhos de Bellman-Ford
+    15 - Dijkstra
+    16 - Caminhos de Bellman-Ford
     ...
     0 - Sai do programa    
 """
@@ -293,13 +296,22 @@ def get_graph_from_file(G=False):
     if (graph_type == "grafo"):
         #cria grafo normal
         G = nx.Graph()
-        G.add_nodes_from(nodes)
-        G.add_edges_from(edges)
+        # G.add_nodes_from(nodes)
+        # try:
+        #     G.add_edges_from(edges)
+        # except TypeError: # TypeError: 'float' object is not iterable -> ocorre quando a aresta é ponderada
+        #     G.add_weighted_edges_from(edges)
+        
     elif (graph_type in ("dígrafo", "digrafo")):
         # cria dígrafo
         G = nx.DiGraph()
-        G.add_nodes_from(nodes)
+    
+    G.add_nodes_from(nodes)
+    try:
         G.add_edges_from(edges)
+    except TypeError: # TypeError: 'float' object is not iterable -> ocorre quando a aresta é ponderada
+        G.add_weighted_edges_from(edges)
+
 
     # imprimir o dicionário criado para visualização do usuário
     print_graph_info(G)
@@ -456,6 +468,73 @@ def bellman_ford_path():
         print('{}: {}'.format(node, length[node]))
     get_user_input("Aperte enter para continuar...")
 
+'https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm'
+'Deve retornar menor caminho entre source e target, contando quantas interações ocorreram e quanto tempo levou para executar.'
+'https://networkx.github.io/documentation/stable/_modules/networkx/algorithms/shortest_paths/weighted.html baseado em _dijkstra_multisource'
+def dijkstra(G): 
+    inicio = input("Qual o vertice inicial?\n")   
+    destino = input("Qual o vertice destino?\n")   
+    Matrix = nx.to_numpy_matrix(G)
+    Nodes = list(G)
+    #IN
+    Visto = list()
+    Visto.append(Nodes[Nodes.index(inicio)])
+    #d
+    distancia = list()
+    distancia = [math.inf] * (len(Nodes))
+    #-1 para representar nulo
+    distancia[Nodes.index(inicio)] = -1
+    #s
+    path = list()
+    path = [None] * (len(Nodes))
+
+    currentNode = Visto[0]
+    #tempo inicial de execuçao
+    StartTime = time.time()
+    #Contador de iteracoes
+    iteracoes = 0
+
+    while destino not in Visto:
+        menorDistVizinho = math.inf
+        nextNode = None
+        #preenche as distancias e escolhe o vizinho com menor distancia dos vizinhos 
+        for vizinho in G.neighbors(currentNode):
+            if vizinho in Visto:
+                continue
+                
+            dist = Matrix[Nodes.index(currentNode),Nodes.index(vizinho)]
+
+            dist = min(dist + int(distancia[Nodes.index(currentNode)]), distancia[Nodes.index(vizinho)])
+            if dist < distancia[Nodes.index(vizinho)]:
+                distancia[Nodes.index(vizinho)] = dist
+                path[Nodes.index(vizinho)] = currentNode
+            if(dist < menorDistVizinho):
+                menorDistVizinho = dist
+                nextNode = vizinho
+
+        currentNode = nextNode
+        Visto.append(currentNode)
+        #Nova Iteração se destino ainda nao foi lido
+        iteracoes = iteracoes + 1
+
+    #tempo final de execucao
+    EndTime = time.time()
+
+    #Constroi o menor caminho
+    shortestPath = list()
+    nextNode = destino
+    shortestPath.append(nextNode)
+    print(nextNode)
+    while inicio not in shortestPath:        
+        shortestPath.append(path[Nodes.index(nextNode)])  
+        nextNode = path[Nodes.index(nextNode)]
+
+    shortestPath.reverse()
+    print("O Caminho mais curto através do algoritmo de Dijkstra foi:\n")
+    print(shortestPath)
+    print("Tempo de Execução:" + str(EndTime-StartTime))
+    print("Iterações:" + str(iteracoes))
+
 
 def optionAction(option, G):
     """
@@ -513,10 +592,13 @@ def optionAction(option, G):
         is_connected()
 
     elif option == 15:
+        dijkstra(G)
+
+    elif option == 16:
         bellman_ford_path()
     # ...
 
-    return option
+    return option, G
 
 # ==== MAIN ======
 
@@ -527,4 +609,4 @@ G = create_graph()
 while option != 0:
     
     print(menu)
-    option = optionAction(option, G) # if option == 0 irá sair do while loop
+    option, G = optionAction(option, G) # if option == 0 irá sair do while loop
