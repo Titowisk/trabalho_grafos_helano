@@ -412,6 +412,7 @@ def floyds_algorithm(G):
         for j in nodes_quantity_range:
             if (i != j and matrix[i][j] == 0):
                 matrix[i][j] = float("inf")
+    print("\n ============== Matriz com infinitos =============")
     pp.pprint(matrix)
 
     # algoritmo de floyd
@@ -420,6 +421,7 @@ def floyds_algorithm(G):
             for j in nodes_quantity_range:
                 if(matrix[i][j] > matrix[i][k] + matrix[k][j]):
                     matrix[i][j] = matrix[i][k] + matrix[k][j]
+    print("\n ============== Matriz Floyd =============")    
     pp.pprint(matrix)
 
 
