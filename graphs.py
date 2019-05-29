@@ -442,6 +442,8 @@ def bellman_ford_path():
     paths=None
     dist=None
     target=None
+    iterations=0
+    startTime=time.time()
     
     for s in source:
         if s not in G:
@@ -469,7 +471,7 @@ def bellman_ford_path():
             dist_u = dist[u]
             for v, e in G_succ[u].items():
                 dist_v = dist_u + weight(v, u, e)
-
+                iterations += 1
                 if dist_v < dist.get(v, inf):
                     if v not in in_q:
                         q.append(v)
@@ -503,6 +505,8 @@ def bellman_ford_path():
 
     for node in G.nodes:
         print('{}: {}'.format(node, length[node]))
+    print("Tempo de Execução: " + str(time.time()-startTime))
+    print("Iterações: " + str(iterations))
     get_user_input("Aperte enter para continuar...")
 
 'https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm'
