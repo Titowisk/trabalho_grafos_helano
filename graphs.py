@@ -402,8 +402,8 @@ def floyds_algorithm(G):
     pp = pprint.PrettyPrinter(indent=4)
     # verifica se o grafo é digrafo e ponderado
     # https://networkx.github.io/documentation/stable/reference/functions.html
-    if not (nx.is_directed(G) and nx.is_weighted(G)):
-        print("O grafo precisa ser dirigido e ponderado.")
+    if not ( nx.is_weighted(G)):
+        print("O grafo precisa ser ponderado.")
         return  False
     
 
@@ -428,6 +428,7 @@ def floyds_algorithm(G):
                     matrix[i][j] = matrix[i][k] + matrix[k][j]
     print("\n ============== Matriz Floyd =============")    
     pp.pprint(matrix)
+    
 def bellman_ford_path():
     """
     Retorna o tamanho do menor caminho de um vértice para todos os outros
