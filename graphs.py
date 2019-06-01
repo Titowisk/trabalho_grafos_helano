@@ -35,6 +35,8 @@ menu = """
     15 - Dijkstra
     16 - Caminhos de Bellman-Ford
     17 - Aplicar Algoritmo de Floyd
+    18 - Warshall
+    19 - Componentes Conectados
     ...
     0 - Sai do programa    
 """
@@ -393,6 +395,54 @@ def is_connected():
             print("Conexo: Não")
     get_user_input("Aperte enter para continuar...")
 
+def busca_em_largura(G, origem):
+    G_adj = G.adj #vizinhos
+    vistos = set()
+    proxNivel = {origem} #comeca a pesquisa pelo vertice de origem
+    while proxNivel:
+        esseNivel = proxNivel
+        proxNivel = set()
+        for vertice in esseNivel:
+            if vertice not in vistos:
+                yield vertice
+                vistos.add(vertice)
+                proxNivel.update(G_adj[vertice])
+
+def componentes_conectados(G):
+    vistos = set()
+    for vertice in G:
+        if vertice not in vistos:
+            c = set(busca_em_largura(G, vertice))
+            yield c
+            vistos.update(c)
+
+def total_componentes_conectados(G):
+    result= sum(1 for cc in componentes_conectados(G))
+    
+    print("O grafo é dividido em " + str(result) + " regiões")
+    get_user_input("Aperte enter para continuar...")
+
+def warshall(G):
+    V= nx.number_of_nodes(G) #quantidade de vértices
+    dist= nx.to_numpy_matrix(G) #transforma o grafo em matriz
+
+    #percorre a matriz para substituir as ausências de caminhos por 777, porém ignorando a distância elemento com ele mesmo (diagonal principal) 
+    for i in range(V):
+        for j in range(V):
+            if i == j: #teste da diagonal principal, distância do elemento para ele mesmo deve continuar 0
+                print(".")
+            else:
+                if dist[i,j] == 0:
+                    dist[i,j] = 777 
+
+    # rodando o algoritmo de Warshall
+    for k in range(V): 
+        for i in range(V): 
+            for j in range(V):
+                dist[i,j] = min(dist[i,j], dist[i,k] + dist[k,j])
+    print(dist)
+    get_user_input("Aperte enter para continuar...")
+
 def floyds_algorithm(G):
     """
     Calcula o menor caminho para todos os pares de vértices do grafo.
@@ -634,13 +684,20 @@ def optionAction(option, G):
         is_connected()
 
     elif option == 15:
+        
         dijkstra(G)
 
     elif option == 16:
         bellman_ford_path()
-    # ...
+    
     elif option == 17:
         floyds_algorithm(G)
+
+    elif option == 18:
+        warshall(G)
+        
+    elif option == 19:
+        total_componentes_conectados(G)
 
     return option, G
 
@@ -654,3 +711,9 @@ while option != 0:
     
     print(menu)
     option, G = optionAction(option, G) # if option == 0 irá sair do while loop
+
+15 - Dijkstra
+    16 - Caminhos de Bellman-Ford
+    17 - Aplicar Algoritmo de Floyd
+    18 - Warshall
+    19 - Componentes Conectados
