@@ -712,8 +712,3 @@ while option != 0:
     print(menu)
     option, G = optionAction(option, G) # if option == 0 irá sair do while loop
 
-15 - Dijkstra
-    16 - Caminhos de Bellman-Ford
-    17 - Aplicar Algoritmo de Floyd
-    18 - Warshall
-    19 - Componentes Conectados
