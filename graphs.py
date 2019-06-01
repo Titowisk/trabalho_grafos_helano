@@ -454,6 +454,7 @@ def floyds_algorithm(G):
     Fonte:
     https://www.youtube.com/watch?v=4OQeCuLYj-4
     """
+    numero_de_iteracoes = 0
     pp = pprint.PrettyPrinter(indent=4)
     # verifica se o grafo é digrafo e ponderado
     # https://networkx.github.io/documentation/stable/reference/functions.html
@@ -479,10 +480,12 @@ def floyds_algorithm(G):
     for k in nodes_quantity_range:
         for i in nodes_quantity_range:
             for j in nodes_quantity_range:
+                numero_de_iteracoes += 1
                 if(matrix[i][j] > matrix[i][k] + matrix[k][j]):
                     matrix[i][j] = matrix[i][k] + matrix[k][j]
     print("\n ============== Matriz Floyd =============")    
     pp.pprint(matrix)
+    print("Numero de iterações = {0}".format(numero_de_iteracoes))
     
 def bellman_ford_path():
     """
