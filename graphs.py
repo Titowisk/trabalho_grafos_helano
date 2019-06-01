@@ -412,14 +412,19 @@ def componentes_conectados(G):
     vistos = set()
     for vertice in G:
         if vertice not in vistos:
-            c = set(busca_em_largura(G, vertice))
-            yield c
-            vistos.update(c)
+            regiao = set(busca_em_largura(G, vertice))
+            yield regiao
+            vistos.update(regiao)
 
 def total_componentes_conectados(G):
-    result= sum(1 for cc in componentes_conectados(G))
+
+    # cria uma lista de quantidade de vertices por regiao
+    regiao_com_mais_vertices = max( len(regiao) for regiao in componentes_conectados(G) )
+    # Soma o número de regioes do grafo
+    soma_de_regioes = sum(1 for regiao in componentes_conectados(G))
     
-    print("O grafo é dividido em " + str(result) + " regiões")
+    print("O grafo é dividido em {0} regiões".format(soma_de_regioes))
+    print("A região com mais vértices possui {0} vertices.".format(regiao_com_mais_vertices))
     get_user_input("Aperte enter para continuar...")
 
 def warshall(G):

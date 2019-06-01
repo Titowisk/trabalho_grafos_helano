@@ -1,0 +1,12 @@
+grafo
+vértice|aresta|peso
+a|a,b|
+b|b,c|
+c|c,a|
+d|d,a|
+bola|bola,chuteira|
+chuteira|chuteira,gol|
+gol|gol,bola|
+coragem|coragem,sabedoria|
+sabedoria|sabedoria,poder|
+poder|poder,coragem|
