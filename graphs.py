@@ -6,6 +6,10 @@
 import networkx as nx
 import matplotlib.pyplot as plt 
 import os
+import pprint
+from collections import deque
+import math
+import time
 
 isWeighted = False
 option = -1
@@ -28,9 +32,11 @@ menu = """
     12 - Remover Vértices
     13 - Remover Arestas
     14 - Testar se Grafo é Conexo
-    ...
-    15 - Warshall
-    20 - Componentes Conectados
+    15 - Dijkstra
+    16 - Caminhos de Bellman-Ford
+    17 - Aplicar Algoritmo de Floyd
+    18 - Warshall
+    19 - Componentes Conectados
     ...
     0 - Sai do programa    
 """
@@ -437,6 +443,191 @@ def warshall(G):
     print(dist)
     get_user_input("Aperte enter para continuar...")
 
+def floyds_algorithm(G):
+    """
+    Calcula o menor caminho para todos os pares de vértices do grafo.
+    Fonte:
+    https://www.youtube.com/watch?v=4OQeCuLYj-4
+    """
+    pp = pprint.PrettyPrinter(indent=4)
+    # verifica se o grafo é digrafo e ponderado
+    # https://networkx.github.io/documentation/stable/reference/functions.html
+    if not ( nx.is_weighted(G)):
+        print("O grafo precisa ser ponderado.")
+        return  False
+    
+
+    # ajusta a matriz para colocar os valores de infinito
+    # https://docs.scipy.org/doc/numpy/reference/generated/numpy.matrix.html
+    M = nx.to_numpy_matrix(G)
+    matrix = M.tolist()
+    nodes_quantity = len(G)
+    nodes_quantity_range = range(nodes_quantity)
+    for i in nodes_quantity_range:
+        for j in nodes_quantity_range:
+            if (i != j and matrix[i][j] == 0):
+                matrix[i][j] = float("inf")
+    print("\n ============== Matriz com infinitos =============")
+    pp.pprint(matrix)
+
+    # algoritmo de floyd
+    for k in nodes_quantity_range:
+        for i in nodes_quantity_range:
+            for j in nodes_quantity_range:
+                if(matrix[i][j] > matrix[i][k] + matrix[k][j]):
+                    matrix[i][j] = matrix[i][k] + matrix[k][j]
+    print("\n ============== Matriz Floyd =============")    
+    pp.pprint(matrix)
+    
+def bellman_ford_path():
+    """
+    Retorna o tamanho do menor caminho de um vértice para todos os outros
+    """
+    source = get_user_input("Escolha o vértice de origem: ")
+
+    if G.is_multigraph():
+        weight = lambda u, v, d: min(attr.get("weight", 1) for attr in d.values())
+    weight = lambda u, v, data: data.get("weight", 1)
+
+    pred=None
+    paths=None
+    dist=None
+    target=None
+    iterations=0
+    startTime=time.time()
+    
+    for s in source:
+        if s not in G:
+            raise nx.NodeNotFound("Source {} not in G".format(s))
+
+    if pred is None:
+        pred = {v: [] for v in source}
+
+    if dist is None:
+        dist = {v: 0 for v in source}
+
+    G_succ = G.succ if G.is_directed() else G.adj
+    inf = float('inf')
+    n = len(G)
+
+    count = {}
+    q = deque(source)
+    in_q = set(source)
+    while q:
+        u = q.popleft()
+        in_q.remove(u)
+
+        # Skip relaxations if any of the predecessors of u is in the queue.
+        if all(pred_u not in in_q for pred_u in pred[u]):
+            dist_u = dist[u]
+            for v, e in G_succ[u].items():
+                dist_v = dist_u + weight(v, u, e)
+                iterations += 1
+                if dist_v < dist.get(v, inf):
+                    if v not in in_q:
+                        q.append(v)
+                        in_q.add(v)
+                        count_v = count.get(v, 0) + 1
+                        if count_v == n:
+                            raise nx.NetworkXUnbounded(
+                                "Negative cost cycle detected.")
+                        count[v] = count_v
+                    dist[v] = dist_v
+                    pred[v] = [u]
+
+                elif dist.get(v) is not None and dist_v == dist.get(v):
+                    pred[v].append(u)
+
+    if paths is not None:
+        dsts = [target] if target is not None else pred
+        for dst in dsts:
+
+            path = [dst]
+            cur = dst
+
+            while pred[cur]:
+                cur = pred[cur][0]
+                path.append(cur)
+
+            path.reverse()
+            paths[dst] = path
+
+    length = dict(dist)
+
+    for node in G.nodes:
+        print('{}: {}'.format(node, length[node]))
+    print("Tempo de Execução: " + str(time.time()-startTime))
+    print("Iterações: " + str(iterations))
+    get_user_input("Aperte enter para continuar...")
+
+'https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm'
+'Deve retornar menor caminho entre source e target, contando quantas interações ocorreram e quanto tempo levou para executar.'
+'https://networkx.github.io/documentation/stable/_modules/networkx/algorithms/shortest_paths/weighted.html baseado em _dijkstra_multisource'
+def dijkstra(G): 
+    inicio = input("Qual o vertice inicial?\n")   
+    destino = input("Qual o vertice destino?\n")   
+    Matrix = nx.to_numpy_matrix(G)
+    Nodes = list(G)
+    #IN
+    Visto = list()
+    Visto.append(Nodes[Nodes.index(inicio)])
+    #d
+    distancia = list()
+    distancia = [math.inf] * (len(Nodes))
+    #-1 para representar nulo
+    distancia[Nodes.index(inicio)] = -1
+    #s
+    path = list()
+    path = [None] * (len(Nodes))
+
+    currentNode = Visto[0]
+    #tempo inicial de execuçao
+    StartTime = time.time()
+    #Contador de iteracoes
+    iteracoes = 0
+
+    while destino not in Visto:
+        menorDistVizinho = math.inf
+        nextNode = None
+        #preenche as distancias e escolhe o vizinho com menor distancia dos vizinhos 
+        for vizinho in G.neighbors(currentNode):
+            if vizinho in Visto:
+                continue
+                
+            dist = Matrix[Nodes.index(currentNode),Nodes.index(vizinho)]
+
+            dist = min(dist + int(distancia[Nodes.index(currentNode)]), distancia[Nodes.index(vizinho)])
+            if dist < distancia[Nodes.index(vizinho)]:
+                distancia[Nodes.index(vizinho)] = dist
+                path[Nodes.index(vizinho)] = currentNode
+            if(dist < menorDistVizinho):
+                menorDistVizinho = dist
+                nextNode = vizinho
+
+        currentNode = nextNode
+        Visto.append(currentNode)
+        #Nova Iteração se destino ainda nao foi lido
+        iteracoes = iteracoes + 1
+
+    #tempo final de execucao
+    EndTime = time.time()
+
+    #Constroi o menor caminho
+    shortestPath = list()
+    nextNode = destino
+    shortestPath.append(nextNode)
+    print(nextNode)
+    while inicio not in shortestPath:        
+        shortestPath.append(path[Nodes.index(nextNode)])  
+        nextNode = path[Nodes.index(nextNode)]
+
+    shortestPath.reverse()
+    print("O Caminho mais curto através do algoritmo de Dijkstra foi:\n")
+    print(shortestPath)
+    print("Tempo de Execução:" + str(EndTime-StartTime))
+    print("Iterações:" + str(iteracoes))
+
+
 def optionAction(option, G):
     """
     Gerencia as ações a serem tomadas conforme opção escolhida pelo usuário
@@ -493,11 +684,20 @@ def optionAction(option, G):
         is_connected()
 
     elif option == 15:
-        warshall(G)
+        
+        dijkstra(G)
 
-    elif option == 20:
+    elif option == 16:
+        bellman_ford_path()
+    
+    elif option == 17:
+        floyds_algorithm(G)
+
+    elif option == 18:
+        warshall(G)
+        
+    elif option == 19:
         total_componentes_conectados(G)
-    # ...
 
     return option, G
 
@@ -511,3 +711,9 @@ while option != 0:
     
     print(menu)
     option, G = optionAction(option, G) # if option == 0 irá sair do while loop
+
+15 - Dijkstra
+    16 - Caminhos de Bellman-Ford
+    17 - Aplicar Algoritmo de Floyd
+    18 - Warshall
+    19 - Componentes Conectados
