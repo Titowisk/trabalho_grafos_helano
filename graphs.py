@@ -583,7 +583,7 @@ def dijkstra(G):
     distancia = list()
     distancia = [math.inf] * (len(Nodes))
     #-1 para representar nulo
-    distancia[Nodes.index(inicio)] = -1
+    distancia[Nodes.index(inicio)] = 0
     #s
     path = list()
     path = [None] * (len(Nodes))
@@ -593,26 +593,55 @@ def dijkstra(G):
     StartTime = time.time()
     #Contador de iteracoes
     iteracoes = 0
-
+    print('Matriz:' + str(Matrix))
     while destino not in Visto:
         menorDistVizinho = math.inf
         nextNode = None
+        #Mostra qual iteracao e qual o nó base para investigar o menor caminho
+        print('\n\n******Iteracao: ' + str(iteracoes) + ' ********')
+        print("Vistos: " + str(Visto))
+        print("Caminho: " + str(path))
+        print("Distancias: " + str(distancia) + '\n')
+        print('Nó Atual: ' + str(currentNode))
         #preenche as distancias e escolhe o vizinho com menor distancia dos vizinhos 
         for vizinho in G.neighbors(currentNode):
+            print('\n** Segue para o Proximo vizinho **')
+
+            #Mostra o vizinho investigado
+            print('Vizinho investigado: ' + str(vizinho))
             if vizinho in Visto:
+                print('Vizinho já investigado, siga para o proximo')                
                 continue
                 
             dist = Matrix[Nodes.index(currentNode),Nodes.index(vizinho)]
+            #Calcula o nó de menor distancia
+            print('Distancia na matriz: ' + str(dist))
+            print('Distancia total da origem até o nó na matriz: ' + str(dist + int(distancia[Nodes.index(currentNode)])))
+            print('Distancia no vetor de distancias: ' + str(distancia[Nodes.index(vizinho)]))
 
             dist = min(dist + int(distancia[Nodes.index(currentNode)]), distancia[Nodes.index(vizinho)])
+
+            #mostra a menor distancia
+            print('Menor Distancia até o vizinho: ' + str(dist))
+            
             if dist < distancia[Nodes.index(vizinho)]:
                 distancia[Nodes.index(vizinho)] = dist
                 path[Nodes.index(vizinho)] = currentNode
-            if(dist < menorDistVizinho):
-                menorDistVizinho = dist
-                nextNode = vizinho
+            #if(dist < menorDistVizinho):
+            #    menorDistVizinho = dist
+            #    nextNode = vizinho
 
-        currentNode = nextNode
+        #encontrando o nó com menor distancia
+        print('*****Encontrando Proximo nó para ser analisado*****')
+        menorDist = math.inf
+        for i in range(len(distancia)):
+            if Nodes[i] not in Visto:
+                if distancia[i] <= menorDist:
+                    menorDist = distancia[i]
+                    currentNode = Nodes[i]
+
+        print("Proximo nó: " + str(currentNode))
+
         Visto.append(currentNode)
         #Nova Iteração se destino ainda nao foi lido
         iteracoes = iteracoes + 1
@@ -632,8 +661,13 @@ def dijkstra(G):
     shortestPath.reverse()
     print("O Caminho mais curto através do algoritmo de Dijkstra foi:\n")
     print(shortestPath)
+    print("\n****Dados de Performance****")
     print("Tempo de Execução:" + str(EndTime-StartTime))
     print("Iterações:" + str(iteracoes))
+    print("\n****Vetores****")
+    print("Vistos: " + str(Visto))
+    print("Caminho: " + str(path))
+    print("Distancias: " + str(distancia) + '\n')
 
 
 def optionAction(option, G):
